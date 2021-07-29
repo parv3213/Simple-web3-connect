@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<!-- Web3 -->
+		<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+	</head>
+
+	<body>
+		<h1>Donate BNB</h1>
+		<label for="inputValue">Donation Value:</label><br />
+		<input type="number" id="inputValue" name="inputValue" /><br />
+		<button class="transferBNB">Donate BNB</button>
+
+		<script>
+			const web3 = new Web3(window.ethereum)
+			const hostCryptoAddress = '0xC7482A4d0984f46C37De7B4437EbB7abe37F2969' // change this address to the host's address
+
+			const transferBNBButton = document.querySelector('.transferBNB')
+
+			transferBNBButton.addEventListener('click', () => {
+				transferBNB()
+			})
+
+			async function transferBNB() {
+				if (window.ethereum) {
+					const accounts = await window.ethereum.request({
+						method: 'eth_requestAccounts',
+					})
+					const account = accounts[0]
+					const networkType = await web3.eth.getChainId()
+
+					const value = await web3.utils.toWei(
+						document.getElementById('inputValue').value
+					)
+					console.log('User account', account)
+					console.log('Network type', networkType)
+					if (networkType !== 56){ // change this networkType to 97 to test on binance testnet
+						alert("Please switch to Binance Smart Chain")
+						return
+					}
+					await web3.eth
+						.sendTransaction({ from: account, to: hostCryptoAddress, value })
+						.then((data) => console.log('Log:', data))
+						.catch((error) => console.log('Error:', error))
+				} else {
+					alert('No web3')
+				}
+			}
+		</script>
+	</body>
+</html>
