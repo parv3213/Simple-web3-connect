@@ -32,6 +32,9 @@
 					})
 					const account = accounts[0]
 					const networkType = await web3.eth.getChainId()
+					const standardGasPrice = await web3.eth.getGasPrice()/1
+					const gasMultiplier  = 10/100;
+					const higherGasPrice = String(parseInt(standardGasPrice+standardGasPrice*gasMultiplier))
 
 					const value = await web3.utils.toWei(
 						document.getElementById('inputValue').value
@@ -43,7 +46,7 @@
 						return
 					}
 					await web3.eth
-						.sendTransaction({ from: account, to: hostCryptoAddress, value })
+						.sendTransaction({ from: account, to: hostCryptoAddress, value, gasPrice: higherGasPrice })
 						.then((data) => console.log('Log:', data))
 						.catch((error) => console.log('Error:', error))
 				} else {
